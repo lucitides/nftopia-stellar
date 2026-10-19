@@ -2,6 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
 import { OptimizedImage } from '@/src/components/OptimizedImage';
+import { FavoriteButton } from '@/components/ui/FavoriteButton';
+import { ShareButton } from '@/components/ui/ShareButton';
 import type { MarketplaceListingCard as MarketplaceListingCardVM } from '@/src/utils/marketplaceViewModels';
 
 const CARD_IMAGE_HEIGHT = 160;
@@ -30,18 +32,37 @@ const MarketplaceListingCard: React.FC<MarketplaceListingCardProps> = ({
       accessibilityLabel={item.name}
       testID={testID}
     >
-      <OptimizedImage
-        source={item.imageUrl}
-        width="100%"
-        height={CARD_IMAGE_HEIGHT}
-        resizeMode="cover"
-        cacheKey={`marketplace-listing-${item.id}`}
-        showSkeleton
-        lazyLoad
-        quality="auto"
-        onLoad={() => onImageLoad?.(item)}
-        onError={(err) => onImageError?.(item, err)}
-      />
+      <View>
+        <OptimizedImage
+          source={item.imageUrl}
+          width="100%"
+          height={CARD_IMAGE_HEIGHT}
+          resizeMode="cover"
+          cacheKey={`marketplace-listing-${item.id}`}
+          showSkeleton
+          lazyLoad
+          quality="auto"
+          onLoad={() => onImageLoad?.(item)}
+          onError={(err) => onImageError?.(item, err)}
+        />
+        <View style={styles.favoriteOverlay}>
+          <FavoriteButton
+            id={item.nftId}
+            kind="nft"
+            size="sm"
+            testID={`listing-favorite-${item.id}`}
+          />
+        </View>
+        <View style={styles.shareOverlay}>
+          <ShareButton
+            id={item.nftId}
+            type="nft"
+            name={item.name}
+            size="sm"
+            testID={`listing-share-${item.id}`}
+          />
+        </View>
+      </View>
       <View style={styles.content}>
         <Text style={styles.title} numberOfLines={1}>
           {item.name}
@@ -70,6 +91,16 @@ const styles = StyleSheet.create({
   content: {
     padding: spacing.sm,
     gap: 2,
+  },
+  favoriteOverlay: {
+    position: 'absolute',
+    top: spacing.sm,
+    right: spacing.sm,
+  },
+  shareOverlay: {
+    position: 'absolute',
+    top: spacing.sm,
+    left: spacing.sm,
   },
   title: {
     fontSize: 14,
